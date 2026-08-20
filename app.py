@@ -262,7 +262,10 @@ with tab_academia:
     else:
         st.warning("🔒 *Función Bloqueada.* Debes completar y aprobar el Quiz de Certificación de arriba para poder activar el Copytrading con dinero simulado.")
 
-
+# ---------------------------------------------------------------------------
+# TAB 3: Descubrir expertos
+# ---------------------------------------------------------------------------
+with tab_expertos:
     for exp in EXPERTS:
         cap_actual = st.session_state.caps.get(exp["id"], exp["cap_default"])
         risk_class = "risk-alto" if exp["riesgo"] == "alto" else "risk-moderado"
