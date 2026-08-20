@@ -9,8 +9,8 @@ st.set_page_config(page_title="Bursa", page_icon="📈", layout="centered")
 # Credenciales de Alpaca (se leen de Streamlit Secrets, nunca escritas aqui)
 # ---------------------------------------------------------------------------
 try:
-    ALPACA_API_KEY = st.secrets["ALPACA_API_KEY"]
-    ALPACA_SECRET_KEY = st.secrets["ALPACA_SECRET_KEY"]
+    ALPACA_API_KEY = st.secrets["PKOTJVWFGOZCIINUWAOKTQGNVC"]
+    ALPACA_SECRET_KEY = st.secrets["FnYrFVM8te7sXbt99NKHmFwSMeQDRqyNoUGkJjXwoidJ"]
     ALPACA_CONFIGURADO = True
 except (KeyError, FileNotFoundError):
     ALPACA_CONFIGURADO = False
