@@ -1,8 +1,19 @@
 import streamlit as st
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mticker
+import requests
 
 st.set_page_config(page_title="Bursa", page_icon="📈", layout="centered")
+
+# ---------------------------------------------------------------------------
+# Credenciales de Alpaca (se leen de Streamlit Secrets, nunca escritas aqui)
+# ---------------------------------------------------------------------------
+try:
+    ALPACA_API_KEY = st.secrets["ALPACA_API_KEY"]
+    ALPACA_SECRET_KEY = st.secrets["ALPACA_SECRET_KEY"]
+    ALPACA_CONFIGURADO = True
+except (KeyError, FileNotFoundError):
+    ALPACA_CONFIGURADO = False
 
 # ---------------------------------------------------------------------------
 # Marca Bursa
@@ -33,7 +44,7 @@ st.markdown(f"""
 .bursa-header span {{ font-size: 22px; font-weight: 700; color: {NAVY}; }}
 div.stButton > button {{
     background-color: {NAVY}; color: white; border: none; border-radius: 8px;
-    font-weight: 500; width: 100%;
+    font-weight: 500; width: 100%; padding: 10px 0; min-height: 48px;
 }}
 div.stButton > button:hover {{ background-color: #1c2c47; color: white; }}
 .bursa-card {{
@@ -73,6 +84,8 @@ if "caps" not in st.session_state:
     st.session_state.caps = {}
 if "wtp_responses" not in st.session_state:
     st.session_state.wtp_responses = []
+if "usuario_educado" not in st.session_state:
+    st.session_state.usuario_educado = False
 
 PAQUETES = [
     {"nombre": "Paquete básico", "monedas": 500, "precio": "$9.900 COP"},
@@ -132,8 +145,8 @@ with c2:
 
 st.write("")
 
-tab_inicio, tab_expertos, tab_rendimiento, tab_wallet = st.tabs(
-    ["Inicio", "Descubrir expertos", "Rendimiento", "Wallet"]
+tab_inicio, tab_academia, tab_expertos, tab_rendimiento, tab_mercado, tab_wallet = st.tabs(
+    ["Inicio", "Academia", "Descubrir expertos", "Rendimiento", "Mercado en vivo", "Wallet"]
 )
 
 # ---------------------------------------------------------------------------
@@ -176,9 +189,80 @@ with tab_inicio:
             st.error("No tienes monedas suficientes todavía. Completa más retos para ganar.")
 
 # ---------------------------------------------------------------------------
-# TAB 2: Descubrir expertos
+# TAB 2: Academia (certificacion con quiz obligatorio)
 # ---------------------------------------------------------------------------
-with tab_expertos:
+with tab_academia:
+    st.caption("Ruta alterna en prueba: aqui el copytrading queda bloqueado hasta aprobar el quiz. Compárala con 'Descubrir expertos', donde se puede copiar de inmediato con un límite por defecto.")
+
+    st.header("Clase 1: ¿Qué es un ETF y cómo reduce tu riesgo?")
+
+    tab1, tab2 = st.tabs(["📖 Lectura Rápida", "🎥 Video Explicativo"])
+    with tab1:
+        st.markdown("""
+        Un *ETF (Exchange-Traded Fund)* o Fondo Cotizado en Bolsa, es como una canasta de acciones.
+        En lugar de comprar una sola empresa (como Apple o Tesla), compras una fracción de cientos de empresas al mismo tiempo.
+
+        *   *Diversificación:* Si a una empresa le va mal, las otras equilibran el portafolio.
+        *   *VOO:* Es el ETF que replica las 500 empresas más grandes de EE.UU. (S&P 500).
+        *   *QQQ:* Es el ETF que agrupa a las 100 empresas tecnológicas más importantes (Nasdaq).
+        """)
+    with tab2:
+        # Embeber un video educativo (puedes cambiarlo por tu propio enlace de YouTube o Vimeo)
+        st.video("https://youtube.com")
+
+    st.divider()
+    st.header("🧠 Quiz de Certificación")
+    st.write("Responde correctamente para desbloquear la función de Copytrading.")
+
+    with st.form("quiz_educativo"):
+        pregunta_1 = st.radio(
+            "1. Si quieres invertir en las 500 empresas más grandes de EE.UU. de forma diversificada, ¿qué activo elegirías?",
+            ["Una acción individual de Tesla", "El ETF VOO (S&P 500)", "Dejar el dinero en efectivo"],
+            index=None,
+        )
+        pregunta_2 = st.radio(
+            "2. ¿Cuál es el principal beneficio de invertir a través de un ETF?",
+            ["Garantizar ganancias del 100% diario", "Eliminar por completo las fluctuaciones del mercado", "Diversificar tu capital en múltiples empresas con una sola operación"],
+            index=None,
+        )
+        boton_enviar = st.form_submit_button("Validar Respuestas")
+
+    if boton_enviar:
+        if pregunta_1 == "El ETF VOO (S&P 500)" and pregunta_2 == "Diversificar tu capital en múltiples empresas con una sola operación":
+            if not st.session_state.usuario_educado:
+                coins_add(100, "Certificación completada: Academia Bursa")
+            st.session_state.usuario_educado = True
+            st.success("🎉 ¡Felicitaciones! Has aprobado el módulo. La función de Copytrading ya está disponible. +100 monedas")
+        else:
+            st.session_state.usuario_educado = False
+            st.error("❌ Algunas respuestas son incorrectas. Repasa el contenido y vuelve a intentarlo.")
+
+    st.divider()
+    st.header("🚀 Panel de Copytrading")
+
+    if st.session_state.usuario_educado:
+        st.write("🟢 *Acceso Concedido.* Elige al trader experto que deseas copiar:")
+
+        # Tarjetas apiladas verticalmente (mejor en Android que columnas lado a lado)
+        traders_academia = [
+            {"nombre": "Laura V.", "iniciales": "LV", "color": TEAL_MID, "enfoque": "ETFs Tecnológicos (QQQ)", "rendimiento": "+14.2%"},
+            {"nombre": "Carlos M.", "iniciales": "CM", "color": GOLD, "enfoque": "Valor y Dividendos (VOO)", "rendimiento": "+9.5%"},
+        ]
+        for t in traders_academia:
+            st.markdown(f"""<div class="bursa-card">
+                <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+                    <div style="width:38px;height:38px;border-radius:50%;background:{t['color']};display:flex;align-items:center;justify-content:center;font-weight:700;color:{NAVY};">{t['iniciales']}</div>
+                    <div><b>Trader {t['nombre']}</b><br><span style="font-size:12px;color:#666;">Enfoque: {t['enfoque']}</span></div>
+                </div>
+            </div>""", unsafe_allow_html=True)
+            st.metric("Rendimiento 2026", t["rendimiento"])
+            if st.button(f"Copiar Portafolio de {t['nombre']}", key=f"btn_academia_{t['iniciales']}"):
+                st.toast(f"¡Orden enviada al broker! Copiando a {t['nombre']}...")
+            st.write("")
+    else:
+        st.warning("🔒 *Función Bloqueada.* Debes completar y aprobar el Quiz de Certificación de arriba para poder activar el Copytrading con dinero simulado.")
+
+
     for exp in EXPERTS:
         cap_actual = st.session_state.caps.get(exp["id"], exp["cap_default"])
         risk_class = "risk-alto" if exp["riesgo"] == "alto" else "risk-moderado"
@@ -277,7 +361,49 @@ with tab_rendimiento:
     st.caption("Precios de mercado en tiempo real: en la app definitiva se integrarían vía TradingView.")
 
 # ---------------------------------------------------------------------------
-# TAB 4: Wallet
+# TAB 5: Mercado en vivo (Alpaca API)
+# ---------------------------------------------------------------------------
+with tab_mercado:
+    st.subheader("Datos de Mercado en Tiempo Real vía Alpaca")
+
+    if not ALPACA_CONFIGURADO:
+        st.info(
+            "Esta sección todavía no está conectada. Agrega ALPACA_API_KEY y "
+            "ALPACA_SECRET_KEY en Settings → Secrets de Streamlit Cloud "
+            "(o en .streamlit/secrets.toml si corres localmente) para activarla."
+        )
+    else:
+        activo = st.selectbox(
+            "Selecciona el ETF o Acción que quieres analizar:",
+            ["VOO (ETF S&P 500)", "QQQ (ETF Nasdaq 100)", "AAPL (Apple Inc.)", "TSLA (Tesla)"],
+        )
+        ticker = activo.split(" ")[0]
+
+        if st.button(f"Consultar precio de {ticker}"):
+            headers = {
+                "APCA-API-KEY-ID": ALPACA_API_KEY,
+                "APCA-API-SECRET-KEY": ALPACA_SECRET_KEY,
+            }
+            try:
+                url_precio = f"https://data.alpaca.markets/v2/stocks/{ticker}/trades/latest?feed=iex"
+                response = requests.get(url_precio, headers=headers, timeout=10)
+
+                if response.status_code == 200:
+                    datos = response.json()
+                    precio_usd = datos["trade"]["p"]
+                    st.metric(label=f"Precio Actual de {ticker}", value=f"${precio_usd:,.2f} USD")
+                    st.success("¡Datos conectados correctamente desde el broker internacional!")
+                    st.info(f"💡 *Tip Educativo:* Al comprar {ticker} a través de nuestra app, estás adquiriendo una fracción regulada en EE.UU. protegida por la SIPC.")
+                else:
+                    st.error(f"Error al conectar con Alpaca: Código {response.status_code}")
+                    st.json(response.json())
+            except Exception as e:
+                st.error(f"Ocurrió un error en la conexión: {e}")
+
+        st.caption("Solo lectura de precios. Ninguna orden real se ejecuta desde este prototipo.")
+
+# ---------------------------------------------------------------------------
+# TAB 6: Wallet
 # ---------------------------------------------------------------------------
 with tab_wallet:
     st.markdown(f"""<div class="bursa-card">
