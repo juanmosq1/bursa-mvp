@@ -189,9 +189,9 @@ with tab_inicio:
             st.error("No tienes monedas suficientes todavía. Completa más retos para ganar.")
 
 # ---------------------------------------------------------------------------
-# TAB 2: Educacion (certificacion con quiz opcional)
+# TAB 2: academia (certificacion con quiz opcional)
 # ---------------------------------------------------------------------------
-with tab_educacion:
+with tab_academia:
     st.caption("Ruta alterna en prueba: aprobar el quiz te permite desbloquear copiar traders ilimitadamente. Compárala con 'Descubrir expertos', donde se puede copiar de inmediato con un límite por defecto.")
 
     st.header("Clase 1: ¿Qué es un ETF y cómo reduce tu riesgo?")
