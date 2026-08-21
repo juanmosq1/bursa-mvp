@@ -70,7 +70,7 @@ st.markdown(f"""
 # Estado de la app (simula la base de datos mientras dura la sesion)
 # ---------------------------------------------------------------------------
 if "coins" not in st.session_state:
-    st.session_state.coins = 1240
+    st.session_state.coins = 1500
 if "tokens" not in st.session_state:
     st.session_state.tokens = 18
 if "history" not in st.session_state:
@@ -95,8 +95,8 @@ PAQUETES = [
 
 EXPERTS = [
     {
-        "id": "camila",
-        "nombre": "Camila Ríos",
+        "id": "Juan",
+        "nombre": "Juan Mosquera",
         "rentabilidad": "+18.4%",
         "riesgo": "moderado",
         "seguidores": 3204,
@@ -189,10 +189,10 @@ with tab_inicio:
             st.error("No tienes monedas suficientes todavía. Completa más retos para ganar.")
 
 # ---------------------------------------------------------------------------
-# TAB 2: Academia (certificacion con quiz obligatorio)
+# TAB 2: Educación (certificacion con quiz opcional)
 # ---------------------------------------------------------------------------
-with tab_academia:
-    st.caption("Ruta alterna en prueba: aqui el copytrading queda bloqueado hasta aprobar el quiz. Compárala con 'Descubrir expertos', donde se puede copiar de inmediato con un límite por defecto.")
+with tab_Educacion:
+    st.caption("Ruta alterna en prueba: aprobar el quiz te permite desbloquear copiar traders ilimitadamente. Compárala con 'Descubrir expertos', donde se puede copiar de inmediato con un límite por defecto.")
 
     st.header("Clase 1: ¿Qué es un ETF y cómo reduce tu riesgo?")
 
@@ -211,8 +211,8 @@ with tab_academia:
         st.video("https://youtube.com")
 
     st.divider()
-    st.header("🧠 Quiz de Certificación")
-    st.write("Responde correctamente para desbloquear la función de Copytrading.")
+    st.header("🧠 Quiz ")
+    st.write("Responde correctamente para copiar ilimitadamente.")
 
     with st.form("quiz_educativo"):
         pregunta_1 = st.radio(
@@ -310,7 +310,7 @@ with tab_expertos:
 # ---------------------------------------------------------------------------
 with tab_rendimiento:
     st.markdown("**Valor total del portafolio**")
-    st.markdown("### $4,182,600 COP")
+    st.markdown("### $7,000,000 COP")
     st.markdown(f"<span style='color:{TEAL_DARK};font-weight:600;'>+15.7% en 3 meses</span>", unsafe_allow_html=True)
 
     # Datos simulados de la evolucion del portafolio (12 semanas)
