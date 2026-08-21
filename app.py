@@ -179,7 +179,7 @@ with tab_inicio:
     st.markdown(f"""<div class="bursa-card">
         <span class="bursa-badge">VIP</span><br><br>
         <b>Sesión en vivo con Camila Ríos</b><br>
-        <span style="color:#666;font-size:13px;">Análisis de apertura Wall Street · Hoy 4:00pm</span>
+        <span style="color:#666;font-size:13px;">Análisis de apertura Wall Street · Hoy 8:00am</span>
     </div>""", unsafe_allow_html=True)
 
     if st.button("Desbloquear con 800 monedas", key="btn_vip"):
